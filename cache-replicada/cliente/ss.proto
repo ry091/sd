@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service Service{
+  rpc consulta(req) returns (ress) {}
+}
+
+message req {
+  string query = 1;  // La consulta SQL que se enviará al servidor
+}
+
+message ress {
+  string data = 1;  // El resultado de la consulta SQL
+}
+

@@ -1,0 +1,6 @@
+grpcio
+grpcio-tools
+redis
+psycopg2-binary  # postgres
+redis-py-cluster
+plotext

@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+
+  redis-normal:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  redis-partition:
+    image: redis
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000
+    ports:
+      - "6380:6380"
+      - "6381:6381"
+      - "6382:6382"
+
+  redis-replicated:
+    image: redis
+    ports:
+      - "6383:6383"
+   
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: base
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  server:
+    build: ./server
+    container_name: server
+    ports:
+      - "50051:50051"
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/app/src
+      - ./server/ss.proto:/app/proto/ss.proto
+  api:
+    build: ./cliente
+    container_name: api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    volumes:
+      - ./src:/app/src
+      - ./cliente/ss.proto:/app/proto/ss.proto
+
+volumes:
+  postgres-data:
